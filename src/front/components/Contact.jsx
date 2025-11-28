@@ -1,7 +1,28 @@
-import useGlobalReducer from "../hooks/useGlobalReducer"
+import { useContext } from "react"
+import { crudContext, getContacts, host } from "../pages/ContactList"
+import apiRequest from "../apiRequest"
+import useGlobalReducer from "../hooks/useGlobalReducer";
 
 export const Contact = (props) => {
-    const { store, dispatch } = useGlobalReducer()
+    const { dispatch } = useGlobalReducer();
+
+    const { setEditValue } = useContext(crudContext)
+    const handleEdit = (e) => {
+        setEditValue(
+            { selectedElement: e.currentTarget.dataset.id, method: e.currentTarget.dataset.actionType }
+        )
+    }
+
+    const handleDelete = async (e) => {
+        await apiRequest(
+            host,
+            `/agendas/chanchitoFeliz/contacts/${e.currentTarget.dataset.id}`,
+            "delete"
+        )
+        setEditValue(null)
+        getContacts(dispatch)
+    }
+
 
     return (
         <li className="list-group-item">
@@ -15,10 +36,10 @@ export const Contact = (props) => {
                 </div>
             </div>
             <div className="actionButtons">
-                <span onClick={() => (dispatch({ type: "edit_contact" }))} className="btn btn-primary">
+                <span onClick={handleEdit} data-id={props.id} className="btn btn-primary" data-action-type="PUT" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                     <i className="fa-solid fa-pen-to-square"></i>
                 </span>
-                <span onClick={() => (dispatch({ type: "delete_contact" }))} className="btn btn-danger">
+                <span onClick={handleDelete} data-id={props.id} className="btn btn-danger" data-action-type="DELETE">
                     <i className="fa-solid fa-trash"></i>
                 </span>
             </div>

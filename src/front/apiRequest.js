@@ -9,17 +9,13 @@ const apiRequest = async (host, endpoint, metodo, body = null) => {
   };
   const response = await fetch(uri, options);
   if (response.status === 404) {
-    props.setLoged(false);
-    props.setUser("");
     alert("Un hijo de su madre te borro la cuenta :(");
-    return;
+    return response;
   }
   if (!response.ok) {
     console.log("dio un error", response.status, response.statusText);
-    return;
   }
-  if (metodo === "GET" && response.ok) return await response.json();
-  getTasks();
+  if (response.ok && metodo === "GET") return await response.json();
 };
 
 export default apiRequest;
