@@ -1,13 +1,14 @@
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useGlobalReducer from "../hooks/useGlobalReducer";
 import { Contact } from "../components/Contact";
-import { createContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import apiRequest from "../apiRequest";
 import { ContactForm } from "../components/ContactForm";
 import { object } from "prop-types";
+import { crudContext } from "./ContactListLayout";
 
-export const crudContext = createContext()
+
 export const host = "https://playground.4geeks.com/contact";
 export const getContacts = async (dispatch) => {
 	try {
@@ -34,9 +35,9 @@ export const getContacts = async (dispatch) => {
 export const ContactList = () => {
 	// global store
 	const { store, dispatch } = useGlobalReducer();
+	const { editValue, setEditValue } = useContext(crudContext);
 	// estados
 	const [action, setAction] = useState(null);
-	const [editValue, setEditValue] = useState(null);
 
 	//  update contacts from, api create user if missing
 	useEffect(
@@ -73,7 +74,7 @@ export const ContactList = () => {
 
 
 	return (
-		<crudContext.Provider value={{ editValue, setEditValue }}>
+		<>
 			<button
 				onClick={() => {
 					setEditValue({ method: "POST", uri: "/agendas/chanchitoFeliz/contacts" });
@@ -101,6 +102,6 @@ export const ContactList = () => {
 					}
 				)}
 			</ul>
-		</crudContext.Provider>
+		</>
 	);
 };

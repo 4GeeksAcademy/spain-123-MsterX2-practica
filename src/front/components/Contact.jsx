@@ -1,19 +1,25 @@
 import { useContext } from "react"
-import { crudContext, getContacts, host } from "../pages/ContactList"
+import { getContacts, host } from "../pages/ContactList"
 import apiRequest from "../apiRequest"
 import useGlobalReducer from "../hooks/useGlobalReducer";
+import { useNavigate } from "react-router-dom";
+import { crudContext, singleContactContext } from "../pages/ContactListLayout";
 
 export const Contact = (props) => {
-    const { dispatch } = useGlobalReducer();
-
+    const { store, dispatch } = useGlobalReducer();
+    const navigate = useNavigate()
+    const { setSingleContact } = useContext(singleContactContext)
     const { setEditValue } = useContext(crudContext)
     const handleEdit = (e) => {
+        e.stopPropagation();
         setEditValue(
             { selectedElement: e.currentTarget.dataset.id, method: e.currentTarget.dataset.actionType }
         )
     }
 
     const handleDelete = async (e) => {
+        e.stopPropagation();
+
         await apiRequest(
             host,
             `/agendas/chanchitoFeliz/contacts/${e.currentTarget.dataset.id}`,
@@ -23,11 +29,23 @@ export const Contact = (props) => {
         getContacts(dispatch)
     }
 
+    const handleSingleView = (e) => {
+        let element;
+        for (const item of store.contacts) {
+            if (item.id == e.currentTarget.dataset.id) {
+                element = item;
+                break;
+            }
+        }
+        setSingleContact({ ...element, image: `https://loremflickr.com/80/80/cat?lock=${element.id}` })
+        navigate(`/contactos/:${element.id}`)
+    }
+
 
     return (
-        <li className="list-group-item">
+        <li className="list-group-item" data-id={props.id} onClick={handleSingleView}>
             <div className="userData">
-                <img className="userImage" src="../../../4geeks.ico" alt="userImage" />
+                <img className="userImage" src={`https://loremflickr.com/80/80/cat?lock=${props.id}`} alt="userImage" />
                 <div className="userDetails">
                     <span><b>{props.name}</b></span>
                     <span className="userInfo"><i className="fas fa-map-marker-alt"></i><span>{props.address}</span></span>

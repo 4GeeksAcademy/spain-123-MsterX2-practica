@@ -1,8 +1,9 @@
 import { useContext, useEffect, useState } from "react"
 import useGlobalReducer from "../hooks/useGlobalReducer";
 import apiRequest from "../apiRequest";
-import { crudContext, getContacts, host } from "../pages/ContactList";
+import { getContacts, host } from "../pages/ContactList";
 import { object } from "prop-types";
+import { crudContext } from "../pages/ContactListLayout";
 
 
 
@@ -62,7 +63,6 @@ export const ContactForm = (props) => {
                 setIsSubmit(false);
                 return
             }
-            console.log(editValue.method, editValue.uri, "mostrando si pasa este condicional respuesta: ", !editValue?.method || !editValue?.uri)
             if (!editValue?.method || !editValue?.uri) return;
             if (editValue.method) {
                 CreateOrUpdateContact();
