@@ -7,9 +7,9 @@ import {
 } from "react-router-dom";
 import { Layout } from "./pages/Layout";
 import { Home } from "./pages/Home";
-import { ContactList } from "./pages/ContactList";
-import SingleContact from "./pages/SingleContact";
-import { ContactListLayout } from "./pages/ContactListLayout";
+import { ContactList } from "./pages/ContactList/ContactList.jsx";
+// import SingleContact from "./pages/ContactList/SingleContact.jsx";
+import { ContactListLayout } from "./pages/ContactList/ContactListLayout.jsx";
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -26,7 +26,7 @@ export const router = createBrowserRouter(
 			<Route path="/" element={<Home />} />
 			<Route path="/contactos" element={<ContactListLayout />}>
 				<Route path="/contactos" element={<ContactList />} />
-				<Route path="/contactos/:id" element={<SingleContact />} />  {/*Dynamic route for single items*/}
+				{/* <Route path="/contactos/:id" element={<SingleContact />} />  Dynamic route for single items */}
 			</Route>
 		</Route>
 	)
