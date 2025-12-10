@@ -9,6 +9,18 @@ export const Home = () => {
 	const { store, dispatch } = useGlobalReducer()
 
 	return (
-		<h1>este es el Home</h1>
+		<header className="text-center py-5">
+			<div className="container">
+				<h1 className="display-3 star-wars-title">
+					<i className="fas fa-star me-3"></i>
+					STAR WARS DATABASE
+					<i className="fas fa-star ms-3"></i>
+				</h1>
+				<p className="lead mt-3">
+					<i className="fas fa-space-shuttle me-2"></i>
+					Explora la galaxia muy, muy lejana
+				</p>
+			</div>
+		</header>
 	);
 }; 

@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { StarWarsCard } from '../../components/StarWarsCard';
+import { searchContext } from '../Layout';
 
-export const Vehicles = ({ searchTerm }) => {
+export const Vehicles = () => {
+    const [searchTerm, setSearchTerm] = useContext(searchContext);
+
+
     const vehiclesData = [
         {
             id: 1,
@@ -100,7 +104,7 @@ export const Vehicles = ({ searchTerm }) => {
                             image={vehicle.image}
                             title={vehicle.title}
                             items={vehicle.items}
-                            onClick={() => handleVehicleClick(vehicle.id, vehicle.title)}
+                            onClick={() => handleVehicleClick(vehicle.id, vehicle.title, vehicle.items)}
                         />
                     ))
                 ) : (

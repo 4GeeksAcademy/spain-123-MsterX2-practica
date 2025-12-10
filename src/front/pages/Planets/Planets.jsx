@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { StarWarsCard } from '../../components/StarWarsCard';
+import { searchContext } from '../Layout';
 
-export const Planets = ({ searchTerm }) => {
+export const Planets = () => {
+    const [searchTerm, setSearchTerm] = useContext(searchContext);
+
     const planetsData = [
         {
             id: 1,

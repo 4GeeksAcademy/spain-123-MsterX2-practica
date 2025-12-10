@@ -10,6 +10,9 @@ import { Home } from "./pages/Home";
 import { ContactList } from "./pages/ContactList/ContactList.jsx";
 // import SingleContact from "./pages/ContactList/SingleContact.jsx";
 import { ContactListLayout } from "./pages/ContactList/ContactListLayout.jsx";
+import { People } from "./pages/People/People.jsx";
+import { Vehicles } from "./pages/Vehicles/Vehicles.jsx";
+import { Planets } from "./pages/Planets/Planets.jsx";
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -20,14 +23,14 @@ export const router = createBrowserRouter(
 		// Note: The child paths of the Layout element replace the Outlet component with the elements contained in the "element" attribute of these child paths.
 
 		// Root Route: All navigation will start from here.
-		<Route path="/" element={<Layout />} errorElement={<h1>Not found!</h1>} >
+		<Route path="/" element={<Layout />} errorElement={<h1>Not found!</h1>}>
 
-			{/* Nested Routes: Defines sub-routes within the BaseHome component. */}
 			<Route path="/" element={<Home />} />
-			<Route path="/contactos" element={<ContactListLayout />}>
-				<Route path="/contactos" element={<ContactList />} />
-				{/* <Route path="/contactos/:id" element={<SingleContact />} />  Dynamic route for single items */}
-			</Route>
+			<Route path="/people" element={<People />} />
+			<Route path="/vehicles" element={<Vehicles />} />
+			<Route path="/planets" element={<Planets />} />
+			<Route path="/contacts" element={<ContactListLayout />} />
+			{/* <Route path="/contactos/:id" element={<SingleContact />} />  Dynamic route for single items */}
 		</Route>
 	)
 );

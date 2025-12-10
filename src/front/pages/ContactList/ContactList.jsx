@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Contact } from '../../components/ContactList/Contact.jsx';
 import { ContactForm } from '../../components/ContactList/ContactForm.jsx';
 import { useCrudContext } from '../../hooks/useContactsContex.jsx';
+import { searchContext } from '../Layout.jsx';
 
 
-export const ContactList = ({ searchTerm }) => {
+export const ContactList = () => {
 	const context = useCrudContext();
+	const [searchTerm, setSearchTerm] = useContext(searchContext);
+
 
 	if (!context) {
 		throw new Error('ContactList must be used within ContactContextProvider');

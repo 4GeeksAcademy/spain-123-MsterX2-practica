@@ -1,11 +1,13 @@
-import { Link } from "react-router-dom";
-import React from 'react';
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import React, { useContext } from 'react';
+import { searchContext } from "../pages/Layout";
 
-export const Navbar = ({ activeSection, onSectionChange, searchTerm, onSearchChange }) => {
+export const Navbar = ({ activeSection, onSectionChange }) => {
 	const handleClick = (e, section) => {
 		e.preventDefault();
 		onSectionChange(section);
 	};
+	const [searchTerm, setSearchTerm] = useContext(searchContext);
 
 	return (
 		<nav className="navbar navbar-expand-lg navbar-dark star-wars-navbar sticky-top">
@@ -35,47 +37,47 @@ export const Navbar = ({ activeSection, onSectionChange, searchTerm, onSearchCha
 					<ul className="navbar-nav me-auto">
 
 						<li className="nav-item">
-							<button
+							<NavLink
+								to={"/people"}
 								className={`nav-link border-0 bg-transparent ${activeSection === 'people' ? 'active' : ''}`}
-								onClick={(e) => handleClick(e, 'people')}
 								style={{ cursor: 'pointer' }}
 							>
 								<i className="fas fa-users me-2"></i>
 								People
-							</button>
+							</NavLink>
 						</li>
 
 						<li className="nav-item">
-							<button
+							<NavLink
+								to={"/vehicles"}
 								className={`nav-link border-0 bg-transparent ${activeSection === 'vehicles' ? 'active' : ''}`}
-								onClick={(e) => handleClick(e, 'vehicles')}
 								style={{ cursor: 'pointer' }}
 							>
 								<i className="fas fa-rocket me-2"></i>
 								Vehicles
-							</button>
+							</NavLink>
 						</li>
 
 						<li className="nav-item">
-							<button
+							<NavLink
+								to={"/planets"}
 								className={`nav-link border-0 bg-transparent ${activeSection === 'planets' ? 'active' : ''}`}
-								onClick={(e) => handleClick(e, 'planets')}
 								style={{ cursor: 'pointer' }}
 							>
 								<i className="fas fa-globe me-2"></i>
 								Planets
-							</button>
+							</NavLink>
 						</li>
 
 						<li className="nav-item">
-							<button
+							<NavLink
+								to={"/contacts"}
 								className={`nav-link border-0 bg-transparent ${activeSection === 'contacts' ? 'active' : ''}`}
-								onClick={(e) => handleClick(e, 'contacts')}
 								style={{ cursor: 'pointer' }}
 							>
 								<i className="fas fa-address-book me-2"></i>
 								Contact List
-							</button>
+							</NavLink>
 						</li>
 
 					</ul>
@@ -88,7 +90,7 @@ export const Navbar = ({ activeSection, onSectionChange, searchTerm, onSearchCha
 								className="form-control star-wars-search"
 								placeholder="Search in galaxy..."
 								value={searchTerm}
-								onChange={(e) => onSearchChange(e.target.value)}
+								onChange={(e) => setSearchTerm(e.target.value)}
 							/>
 						</div>
 					</div>
