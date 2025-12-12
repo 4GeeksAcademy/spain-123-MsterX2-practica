@@ -1,4 +1,3 @@
-import apiRequest from './apiRequest.js'
 import { People } from './pages/People/People.jsx'
 export const initialStore = () => {
 	return {

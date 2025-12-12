@@ -4,7 +4,7 @@ import { searchContext } from '../Layout';
 
 export const People = () => {
     const [searchTerm, setSearchTerm] = useContext(searchContext);
-
+    const host = "https://www.swapi.tech/api/";
     const peopleData = [
         {
             id: 1,

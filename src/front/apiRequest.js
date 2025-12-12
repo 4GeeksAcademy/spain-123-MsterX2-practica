@@ -1,4 +1,4 @@
-const apiRequest = async (host, endpoint, metodo, body = null) => {
+export const apiRequest = async (host, endpoint, metodo, body = null) => {
   const uri = `${host}${endpoint}`;
   const options = {
     method: metodo,
@@ -17,5 +17,3 @@ const apiRequest = async (host, endpoint, metodo, body = null) => {
   }
   if (response.ok && metodo === "GET") return await response.json();
 };
-
-export default apiRequest;

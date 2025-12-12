@@ -12,14 +12,14 @@ export const Navbar = ({ activeSection, onSectionChange }) => {
 	return (
 		<nav className="navbar navbar-expand-lg navbar-dark star-wars-navbar sticky-top">
 			<div className="container">
-				<button
+				<Link
 					className="navbar-brand border-0 bg-transparent"
-					onClick={(e) => e.preventDefault()}
+					to={"/"}
 					style={{ cursor: 'pointer' }}
 				>
 					<i className="fas fa-star-of-life me-2"></i>
 					STAR WARS DATABASE
-				</button>
+				</Link>
 
 				<button
 					className="navbar-toggler"

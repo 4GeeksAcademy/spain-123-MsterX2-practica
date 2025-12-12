@@ -1,88 +1,101 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { StarWarsCard } from '../../components/StarWarsCard';
 import { searchContext } from '../Layout';
+import { apiRequest } from '../../apiRequest';
+import { useNavigate } from 'react-router-dom';
 
 export const Vehicles = () => {
     const [searchTerm, setSearchTerm] = useContext(searchContext);
+    const [vehiclesData, setVehiclesData] = useState([])
+    const [filteredVehicles, setFilteredVehicles] = useState([])
+    const navigate = useNavigate()
+
+    const host = "https://www.swapi.tech/api";
+    const getData = async () => {
+        const data = await apiRequest(host, "/vehicles", "GET");
+        console.log(data.results)
+        setVehiclesData(data.results)
+    }
+    useEffect(
+        () => {
+            // getData()
+            setVehiclesData(
+                [
+                    {
+                        id: 1,
+                        title: 'X-Wing Starfighter',
+                        image: 'https://images.unsplash.com/photo-1656716459789-9875ab1177f8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdGFyJTIwd2FycyUyMHNwYWNlfGVufDF8fHx8MTc2NDc3ODU0M3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+                        items: ['Clase: Caza estelar',
+                            'Fabricante: Incom Corporation',
+                            'Armamento: 4 cañones láser',
+                            'Tripulación: 1 piloto + 1 droide']
+                    },
+                    {
+                        id: 2,
+                        title: 'Millennium Falcon',
+                        image: 'https://images.unsplash.com/photo-1656716459789-9875ab1177f8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdGFyJTIwd2FycyUyMHNwYWNlfGVufDF8fHx8MTc2NDc3ODU0M3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+                        items: ['Clase: Carguero ligero YT-1300',
+                            'Velocidad: 0.5 hiperespacial',
+                            'Propietario: Han Solo',
+                            'Características: Modificado ilegalmente']
+                    },
+                    {
+                        id: 3,
+                        title: 'TIE Fighter',
+                        image: 'https://images.unsplash.com/photo-1656716459789-9875ab1177f8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdGFyJTIwd2FycyUyMHNwYWNlfGVufDF8fHx8MTc2NDc3ODU0M3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+                        items: ['Clase: Caza estelar',
+                            'Afiliación: Imperio Galáctico',
+                            'Armamento: 2 cañones láser',
+                            'Característica: Alta maniobrabilidad']
+                    },
+                    {
+                        id: 4,
+                        title: 'Star Destroyer',
+                        image: 'https://images.unsplash.com/photo-1656716459789-9875ab1177f8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdGFyJTIwd2FycyUyMHNwYWNlfGVufDF8fHx8MTc2NDc3ODU0M3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+                        items: ['Clase: Destructor Estelar Clase Imperial',
+                            'Longitud: 1,600 metros',
+                            'Tripulación: 37,000 personas',
+                            'Armamento: 60 turbolásers']
+                    },
+                    {
+                        id: 5,
+                        title: 'AT-AT Walker',
+                        image: 'https://images.unsplash.com/photo-1656716459789-9875ab1177f8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdGFyJTIwd2FycyUyMHNwYWNlfGVufDF8fHx8MTc2NDc3ODU0M3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+                        items: ['Clase: Transporte blindado todo terreno',
+                            'Altura: 22.5 metros',
+                            'Tripulación: 5 operadores',
+                            'Capacidad: 40 soldados']
+                    },
+                    {
+                        id: 6,
+                        title: 'Speeder Bike',
+                        image: 'https://images.unsplash.com/photo-1656716459789-9875ab1177f8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdGFyJTIwd2FycyUyMHNwYWNlfGVufDF8fHx8MTc2NDc3ODU0M3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+                        items: ['Clase: Moto de reconocimiento',
+                            'Velocidad máxima: 500 km/h',
+                            // 'Tripulación: 1 piloto',
+                            'Uso principal: Patrulla y exploración']
+                    }
+                ])
+        }, [])
+
+    // useEffect(
+    //     () => {
+    //         console.log(vehiclesData)
+    //         if (vehiclesData.length == 0) return;
+    //         const filtrados = vehiclesData.filter(vehicle =>
+    //             vehicle.name.toLowerCase().includes(searchTerm.toLowerCase())
+    //         );
+    //         setFilteredVehicles(filtrados)
+    //     }, [vehiclesData,]
+    // )
 
 
-    const vehiclesData = [
-        {
-            id: 1,
-            title: 'X-Wing Starfighter',
-            image: 'https://images.unsplash.com/photo-1656716459789-9875ab1177f8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdGFyJTIwd2FycyUyMHNwYWNlfGVufDF8fHx8MTc2NDc3ODU0M3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-            items: [
-                'Clase: Caza estelar',
-                'Fabricante: Incom Corporation',
-                'Armamento: 4 cañones láser',
-                'Tripulación: 1 piloto + 1 droide'
-            ]
-        },
-        {
-            id: 2,
-            title: 'Millennium Falcon',
-            image: 'https://images.unsplash.com/photo-1656716459789-9875ab1177f8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdGFyJTIwd2FycyUyMHNwYWNlfGVufDF8fHx8MTc2NDc3ODU0M3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-            items: [
-                'Clase: Carguero ligero YT-1300',
-                'Velocidad: 0.5 hiperespacial',
-                'Propietario: Han Solo',
-                'Características: Modificado ilegalmente'
-            ]
-        },
-        {
-            id: 3,
-            title: 'TIE Fighter',
-            image: 'https://images.unsplash.com/photo-1656716459789-9875ab1177f8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdGFyJTIwd2FycyUyMHNwYWNlfGVufDF8fHx8MTc2NDc3ODU0M3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-            items: [
-                'Clase: Caza estelar',
-                'Afiliación: Imperio Galáctico',
-                'Armamento: 2 cañones láser',
-                'Característica: Alta maniobrabilidad'
-            ]
-        },
-        {
-            id: 4,
-            title: 'Star Destroyer',
-            image: 'https://images.unsplash.com/photo-1656716459789-9875ab1177f8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdGFyJTIwd2FycyUyMHNwYWNlfGVufDF8fHx8MTc2NDc3ODU0M3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-            items: [
-                'Clase: Destructor Estelar Clase Imperial',
-                'Longitud: 1,600 metros',
-                'Tripulación: 37,000 personas',
-                'Armamento: 60 turbolásers'
-            ]
-        },
-        {
-            id: 5,
-            title: 'AT-AT Walker',
-            image: 'https://images.unsplash.com/photo-1656716459789-9875ab1177f8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdGFyJTIwd2FycyUyMHNwYWNlfGVufDF8fHx8MTc2NDc3ODU0M3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-            items: [
-                'Clase: Transporte blindado todo terreno',
-                'Altura: 22.5 metros',
-                'Tripulación: 5 operadores',
-                'Capacidad: 40 soldados'
-            ]
-        },
-        {
-            id: 6,
-            title: 'Speeder Bike',
-            image: 'https://images.unsplash.com/photo-1656716459789-9875ab1177f8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdGFyJTIwd2FycyUyMHNwYWNlfGVufDF8fHx8MTc2NDc3ODU0M3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-            items: [
-                'Clase: Moto de reconocimiento',
-                'Velocidad máxima: 500 km/h',
-                'Tripulación: 1 piloto',
-                'Uso principal: Patrulla y exploración'
-            ]
-        }
-    ];
 
-    const handleVehicleClick = (id, title) => {
-        console.log(`Vehicle clicked: ${title} (ID: ${id})`);
+    // const vehiclesData = ;
+
+    const handleVehicleClick = async (id) => {
+        console.log(`Vehicle clicked: (ID: ${id})`);
     };
-
-    const filteredVehicles = vehiclesData.filter(vehicle =>
-        vehicle.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        vehicle.items.some(item => item.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
 
     return (
         <div className="container py-5">
@@ -104,7 +117,7 @@ export const Vehicles = () => {
                             image={vehicle.image}
                             title={vehicle.title}
                             items={vehicle.items}
-                            onClick={() => handleVehicleClick(vehicle.id, vehicle.title, vehicle.items)}
+                            onClick={() => handleVehicleClick(vehicle.id)}
                         />
                     ))
                 ) : (
