@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: d3f990f70504
+Revision ID: e0ad9afedf32
 Revises: 
-Create Date: 2025-12-13 22:25:20.478166
+Create Date: 2025-12-16 00:21:09.828306
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'd3f990f70504'
+revision = 'e0ad9afedf32'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,29 +21,33 @@ def upgrade():
     op.create_table('characters',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=120), nullable=False),
-    sa.Column('diameter', sa.String(length=120), nullable=False),
-    sa.Column('rotation_period', sa.String(length=120), nullable=False),
-    sa.Column('orbital_period', sa.String(length=120), nullable=False),
-    sa.Column('gravity', sa.String(length=120), nullable=False),
-    sa.Column('population', sa.String(length=120), nullable=False),
-    sa.Column('climate', sa.String(length=120), nullable=False),
-    sa.Column('terrain', sa.String(length=120), nullable=False),
+    sa.Column('height', sa.String(length=120), nullable=False),
+    sa.Column('mass', sa.String(length=120), nullable=False),
+    sa.Column('hair_color', sa.String(length=120), nullable=False),
+    sa.Column('skin_color', sa.String(length=120), nullable=False),
+    sa.Column('eye_color', sa.String(length=120), nullable=False),
+    sa.Column('birth_year', sa.String(length=120), nullable=False),
+    sa.Column('gender', sa.String(length=120), nullable=False),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('climate'),
-    sa.UniqueConstraint('diameter'),
-    sa.UniqueConstraint('gravity'),
+    sa.UniqueConstraint('birth_year'),
+    sa.UniqueConstraint('eye_color'),
+    sa.UniqueConstraint('gender'),
+    sa.UniqueConstraint('hair_color'),
+    sa.UniqueConstraint('height'),
+    sa.UniqueConstraint('mass'),
     sa.UniqueConstraint('name'),
-    sa.UniqueConstraint('orbital_period'),
-    sa.UniqueConstraint('population'),
-    sa.UniqueConstraint('rotation_period'),
-    sa.UniqueConstraint('terrain')
+    sa.UniqueConstraint('skin_color')
     )
     op.create_table('planets',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('diameter', sa.String(), nullable=False),
-    sa.Column('rotation', sa.String(), nullable=False),
-    sa.Column('following_id', sa.String(), nullable=False),
+    sa.Column('rotation_period', sa.String(), nullable=False),
+    sa.Column('orbital_period', sa.String(), nullable=False),
+    sa.Column('gravity', sa.String(), nullable=False),
+    sa.Column('population', sa.String(), nullable=False),
+    sa.Column('climate', sa.String(), nullable=False),
+    sa.Column('terrain', sa.String(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('users',
@@ -104,7 +108,7 @@ def upgrade():
     )
     op.create_table('medias',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('media_type', sa.Enum('Image', 'video', 'audio', name='media_type'), nullable=False),
+    sa.Column('media_type', sa.Enum('image', 'video', 'audio', name='media_type'), nullable=False),
     sa.Column('url', sa.String(), nullable=False),
     sa.Column('post_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['post_id'], ['posts.id'], ),
