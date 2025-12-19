@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-
+from datetime import datetime
 db = SQLAlchemy()
 
 
@@ -29,7 +29,7 @@ class Posts(db.Model):
     title = db.Column(db.String(80), unique=True, nullable=False)
     description = db.Column(db.String(), unique=False, nullable=False)
     body = db.Column(db.String(), unique=False, nullable=False)
-    date = db.Column(db.DateTime, unique=False, nullable=False)
+    date = db.Column(db.DateTime, unique=False, nullable=False, default=datetime.now)
     image_url = db.Column(db.String(), unique=False, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     user_to = db.relationship("Users", foreign_keys=[
@@ -57,65 +57,55 @@ class Comments(db.Model):
         "users.id"), unique=False, nullable=False)
     post_id = db.Column(db.Integer, db.ForeignKey(
         "posts.id"), unique=False, nullable=False)
-    user_to = db.relationship("Users", foreign_keys=[
-                              user_id], backref=db.backref("coments_to", lazy="select"))
-    post_to = db.relationship("Posts", foreign_keys=[
-                              post_id], backref=db.backref("coments_to", lazy="select"))
+    user_to = db.relationship("Users", foreign_keys=[user_id],
+                              backref=db.backref("coments_to", lazy="select"))
+    post_to = db.relationship("Posts", foreign_keys=[post_id],
+                              backref=db.backref("coments_to", lazy="select"))
 
     def __repr__(self):
         return f'<Comentario: {self.id}>'
 
     def serialize(self):
-        return {
-            "id": self.id,
-            "body": self.body,
-            "user_id": self.user_id,
-            "post_id": self.post_id,
-        }
+        return {"id": self.id,
+                "body": self.body,
+                "user_id": self.user_id,
+                "post_id": self.post_id,}
 
 
 class Medias(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    media_type = db.Column(db.Enum("image", "video", "audio", name="media_type"),
-                           nullable=False)
+    media_type = db.Column(db.Enum("image", "video", "audio", name="media_type"),nullable=False)
     url = db.Column(db.String(), unique=False, nullable=False)
-    post_id = db.Column(db.Integer, db.ForeignKey(
-        "posts.id"), unique=False, nullable=False)
-    post_to = db.relationship("Posts", foreign_keys=[
-                              post_id], backref=db.backref("media_to", lazy="select"))
+    post_id = db.Column(db.Integer, db.ForeignKey("posts.id"), unique=False, nullable=False)
+    post_to = db.relationship("Posts", foreign_keys=[post_id],
+                              backref=db.backref("media_to", lazy="select"))
 
     def __repr__(self):
         return f'<Media {self.id}: {self.media_type}>'
 
     def serialize(self):
-        return {
-            "id": self.id,
+        return {"id": self.id,
             "media_type": self.media_type,
             "url": self.url,
-            "post_id": self.post_id,
-        }
+            "post_id": self.post_id,}
 
 
 class Followers(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    following_id = db.Column(db.Integer, db.ForeignKey(
-        "users.id"), unique=False, nullable=False)
-    follower_id = db.Column(db.Integer, db.ForeignKey(
-        "users.id"), unique=False, nullable=False)
-    user_to = db.relationship("Users", foreign_keys=[
-                              following_id], backref=db.backref("followers_to", lazy="select"))
-    user_from = db.relationship("Users", foreign_keys=[
-        follower_id], backref=db.backref("following_to", lazy="select"))
+    following_id = db.Column(db.Integer, db.ForeignKey("users.id"), unique=False, nullable=False)
+    follower_id = db.Column(db.Integer, db.ForeignKey("users.id"), unique=False, nullable=False)
+    user_to = db.relationship("Users", foreign_keys=[following_id],
+                              backref=db.backref("followers_to", lazy="select"))
+    user_from = db.relationship("Users", foreign_keys=[follower_id],
+                              backref=db.backref("following_to", lazy="select"))
 
     def __repr__(self):
         return f'<{self.follower_id} is folowing {self.following_id}>'
 
     def serialize(self):
-        return {
-            "id": self.id,
-            "following_id": self.following_id,
-            "follower_id": self.follower_id,
-        }
+        return {"id": self.id,
+                "following_id": self.following_id,
+                "follower_id": self.follower_id,}
 
 
 class Characters(db.Model):
@@ -133,39 +123,34 @@ class Characters(db.Model):
         return f'<character {self.name}>'
 
     def serialize(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "height": self.height,
-            "mass": self.mass,
-            "hair_color": self.hair_color,
-            "skin_color": self.skin_color,
-            "eye_color": self.eye_color,
-            "birth_year": self.birth_year,
-            "gender": self.gender,
-        }
+        return {"id": self.id,
+                "name": self.name,
+                "height": self.height,
+                "mass": self.mass,
+                "hair_color": self.hair_color,
+                "skin_color": self.skin_color,
+                "eye_color": self.eye_color,
+                "birth_year": self.birth_year,
+                "gender": self.gender,}
 
 
 class CharacterFavorites(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey(
-        "users.id"), unique=False, nullable=False)
-    character_id = db.Column(db.Integer, db.ForeignKey(
-        "characters.id"), unique=False, nullable=False)
-    user_to = db.relationship("Users", foreign_keys=[
-                              user_id], backref=db.backref("character_favorites_to", lazy="select"))
-    characters_to = db.relationship("Characters", foreign_keys=[
-        character_id], backref=db.backref("character_favorites_to", lazy="select"))
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), unique=False, nullable=False)
+    character_id = db.Column(db.Integer, db.ForeignKey("characters.id"),
+                             unique=False, nullable=False)
+    user_to = db.relationship("Users", foreign_keys=[user_id],
+                              backref=db.backref("character_favorites_to", lazy="select"))
+    characters_to = db.relationship("Characters", foreign_keys=[character_id],
+                                    backref=db.backref("character_favorites_to", lazy="select"))
 
     def __repr__(self):
         return f'<User {self.user_id} has character {self.character_id} as favorite character>'
 
     def serialize(self):
-        return {
-            "id": self.id,
-            "user_id": self.user_id,
-            "character_id": self.character_id,
-        }
+        return {"id": self.id,
+                "user_id": self.user_id,
+                "character_id": self.character_id,}
 
 
 class Planets(db.Model):
@@ -183,36 +168,30 @@ class Planets(db.Model):
         return f'<Planet {self.id}: {self.name}>'
 
     def serialize(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "diameter": self.diameter,
-            "rotation_period": self.rotation_period,
-            "orbital_period": self.orbital_period,
-            "gravity": self.gravity,
-            "population": self.population,
-            "climate": self.climate,
-            "terrain": self.terrain,
-        }
+        return {"id": self.id,
+                "name": self.name,
+                "diameter": self.diameter,
+                "rotation_period": self.rotation_period,
+                "orbital_period": self.orbital_period,
+                "gravity": self.gravity,
+                "population": self.population,
+                "climate": self.climate,
+                "terrain": self.terrain,}
 
 
 class PlanetFavorites(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey(
-        "users.id"), unique=False, nullable=False)
-    planet_id = db.Column(db.Integer, db.ForeignKey(
-        "planets.id"), unique=False, nullable=False)
-    user_to = db.relationship("Users", foreign_keys=[
-                              user_id], backref=db.backref("planet_favorites_to", lazy="select"))
-    planets_to = db.relationship("Planets", foreign_keys=[
-        planet_id], backref=db.backref("planet_favorites_to", lazy="select"))
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), unique=False, nullable=False)
+    planet_id = db.Column(db.Integer, db.ForeignKey("planets.id"), unique=False, nullable=False)
+    user_to = db.relationship("Users", foreign_keys=[user_id],
+                              backref=db.backref("planet_favorites_to", lazy="select"))
+    planets_to = db.relationship("Planets", foreign_keys=[planet_id],
+                                 backref=db.backref("planet_favorites_to", lazy="select"))
 
     def __repr__(self):
         return f'<User {self.user_id} has planet {self.planet_id} as favorite planet>'
 
     def serialize(self):
-        return {
-            "id": self.id,
-            "user_id": self.user_id,
-            "planet_id": self.planet_id,
-        }
+        return {"id": self.id,
+                "user_id": self.user_id,
+                "planet_id": self.planet_id,}
