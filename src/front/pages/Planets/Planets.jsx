@@ -1,87 +1,47 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useMemo } from 'react';
 import { StarWarsCard } from '../../components/StarWarsCard';
 import { searchContext } from '../Layout';
+import { fetchPlanets } from '../../starWarsActions';
+import { useStarWarsContext } from '../../hooks/useStarWarsContext';
 
 export const Planets = () => {
-    const [searchTerm, setSearchTerm] = useContext(searchContext);
+    const [searchTerm] = useContext(searchContext);
+    const { state, dispatch } = useStarWarsContext();
+    const { planets, previous, next, loading } = state;
 
-    const planetsData = [
-        {
-            id: 1,
-            title: 'Tatooine',
-            image: 'https://images.unsplash.com/photo-1520034475321-cbe63696469a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnYWxheHklMjBzdGFyc3xlbnwxfHx8fDE3NjQ3NDU5MTJ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-            items: [
-                'Tipo: Planeta desértico',
-                'Región: Borde Exterior',
-                'Soles: 2 (binario)',
-                'Población: 200,000 habitantes'
-            ]
-        },
-        {
-            id: 2,
-            title: 'Coruscant',
-            image: 'https://images.unsplash.com/photo-1520034475321-cbe63696469a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnYWxheHklMjBzdGFyc3xlbnwxfHx8fDE3NjQ3NDU5MTJ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-            items: [
-                'Tipo: Ecumenópolis (ciudad planeta)',
-                'Región: Mundos del Núcleo',
-                'Capital: República/Imperio Galáctico',
-                'Población: 1 billón de habitantes'
-            ]
-        },
-        {
-            id: 3,
-            title: 'Hoth',
-            image: 'https://images.unsplash.com/photo-1520034475321-cbe63696469a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnYWxheHklMjBzdGFyc3xlbnwxfHx8fDE3NjQ3NDU5MTJ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-            items: [
-                'Tipo: Planeta helado',
-                'Región: Borde Exterior',
-                'Clima: Temperaturas bajo cero',
-                'Base: Echo Base (Alianza Rebelde)'
-            ]
-        },
-        {
-            id: 4,
-            title: 'Endor',
-            image: 'https://images.unsplash.com/photo-1520034475321-cbe63696469a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnYWxheHklMjBzdGFyc3xlbnwxfHx8fDE3NjQ3NDU5MTJ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-            items: [
-                'Tipo: Luna boscosa',
-                'Región: Territorios del Borde Exterior',
-                'Habitantes nativos: Ewoks',
-                'Terreno: Bosques densos'
-            ]
-        },
-        {
-            id: 5,
-            title: 'Naboo',
-            image: 'https://images.unsplash.com/photo-1520034475321-cbe63696469a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnYWxheHklMjBzdGFyc3xlbnwxfHx8fDE3NjQ3NDU5MTJ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-            items: [
-                'Tipo: Planeta templado',
-                'Región: Borde Medio',
-                'Habitantes: Humanos y Gungans',
-                'Característica: Planeta natal de Padmé'
-            ]
-        },
-        {
-            id: 6,
-            title: 'Dagobah',
-            image: 'https://images.unsplash.com/photo-1520034475321-cbe63696469a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnYWxheHklMjBzdGFyc3xlbnwxfHx8fDE3NjQ3NDU5MTJ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-            items: [
-                'Tipo: Planeta pantanoso',
-                'Región: Borde Exterior',
-                'Clima: Húmedo y neblinoso',
-                'Habitante notable: Maestro Yoda'
-            ]
-        }
-    ];
+    const host = "https://www.swapi.tech/api";
+    const uri = "planets";
 
-    const handlePlanetClick = (id, title) => {
-        console.log(`Planet clicked: ${title} (ID: ${id})`);
-    };
+    useEffect(() => {
+        fetchPlanets(dispatch, `${host}/${uri}`);
+    }, []);
 
-    const filteredPlanets = planetsData.filter(planet =>
-        planet.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        planet.items.some(item => item.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
+    const filteredPlanets = useMemo(() => {
+        return planets.filter(planet =>
+            planet.name.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+    }, [planets, searchTerm]);
+
+    if (loading) {
+        return (
+            <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "60vh" }}>
+                <div className="text-center">
+                    <div className="spinner-border text-warning mb-4" role="status" style={{ width: "4rem", height: "4rem" }}>
+                        <span className="visually-hidden">Loading...</span>
+                    </div>
+
+                    <h3 className="section-title mt-3">
+                        <i className="fas fa-jedi me-2"></i>
+                        Loading planets
+                    </h3>
+
+                    <p className="section-subtitle">
+                        Curiosity: Tatooine is the home planet of both Anakin Skywalker and Luke Skywalker!
+                    </p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="container py-5">
@@ -95,26 +55,46 @@ export const Planets = () => {
                     Worlds Across the Galaxy
                 </p>
             </div>
+
             <div className="row">
                 {filteredPlanets.length > 0 ? (
-                    filteredPlanets.map((planet) => (
+                    filteredPlanets.map(planet => (
                         <StarWarsCard
-                            key={planet.id}
-                            image={planet.image}
-                            title={planet.title}
-                            items={planet.items}
-                            onClick={() => handlePlanetClick(planet.id, planet.title)}
+                            key={planet.uid}
+                            item={planet}
+                            type="planets"
                         />
                     ))
                 ) : (
-                    <div className="col-12 text-center">
-                        <div className="no-results">
-                            <i className="fas fa-search fa-3x mb-3"></i>
-                            <h3>No planets found</h3>
-                            <p>Try adjusting your search term</p>
+                    !loading && (
+                        <div className="col-12 text-center">
+                            <div className="no-results">
+                                <i className="fas fa-search fa-3x mb-3"></i>
+                                <h3>No planets found</h3>
+                                <p>Try adjusting your search term</p>
+                            </div>
                         </div>
-                    </div>
+                    )
                 )}
+            </div>
+
+            <div className="d-flex justify-content-center gap-3 my-4">
+                <button
+                    className="btn btn-outline-warning px-4"
+                    disabled={!previous}
+                    onClick={() => fetchPlanets(dispatch, previous)}
+                >
+                    <i className="fas fa-chevron-left me-2"></i>
+                    Previous
+                </button>
+                <button
+                    className="btn btn-outline-warning px-4"
+                    disabled={!next}
+                    onClick={() => fetchPlanets(dispatch, next)}
+                >
+                    Next
+                    <i className="fas fa-chevron-right ms-2"></i>
+                </button>
             </div>
         </div>
     );

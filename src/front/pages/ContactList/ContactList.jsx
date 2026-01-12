@@ -1,37 +1,94 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Contact } from '../../components/ContactList/Contact.jsx';
 import { ContactForm } from '../../components/ContactList/ContactForm.jsx';
-import { useCrudContext } from '../../hooks/useContactsContex.jsx';
 import { searchContext } from '../Layout.jsx';
+import { useAnimationContext } from '../../hooks/useAnimationContext.jsx';
+import useGlobalReducer from '../../hooks/useContactsContex.jsx';
+import { fetchContacts } from '../../action.js';
+import { apiRequest } from '../../apiRequest.js';
 
 
 export const ContactList = () => {
-	const context = useCrudContext();
+	const { animatingId, animationType } = useAnimationContext();
 	const [searchTerm, setSearchTerm] = useContext(searchContext);
-
-
-	if (!context) {
-		throw new Error('ContactList must be used within ContactContextProvider');
-	}
-
-	const {
-		contacts,
-		setEditValue,
-		animatingId,
-		animationType
-	} = context;
+	const { store, dispatch } = useGlobalReducer();
+	const [editValue, setEditValue] = useState();
+	const { contacts, loading, error } = store;
+	const user = "chanchitoFeliz"
+	const host = "https://playground.4geeks.com/contact";
 
 	const handleAddNew = () => {
 		setEditValue({ method: "POST" });
 	};
 
-	// Filtrar por término de búsqueda
 	const filteredContacts = contacts.filter(contact =>
 		contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
 		contact.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
 		contact.phone.toLowerCase().includes(searchTerm.toLowerCase()) ||
 		contact.address.toLowerCase().includes(searchTerm.toLowerCase())
 	);
+
+	const createUserIfNotExist = async (host, user) => {
+		const { ok, data } = await apiRequest(`${host}/agendas/${user}`, "POST");
+		return { ok, data };
+	};
+
+
+
+
+
+	const fetchOrCreateContacts = async (dispatch, host, user) => {
+		const response = await fetchContacts(dispatch, host, user);
+		if (response && response.status === 404) {
+			console.log(`Usuario ${user} no existe, creando...`);
+			await createUserIfNotExist(host, user);
+			await fetchContacts(dispatch, host, user);
+		}
+	};
+
+	useEffect(() => {
+		fetchOrCreateContacts(dispatch, host, user);
+	}, [dispatch]);
+
+	if (loading) {
+		return (
+			<div className="d-flex justify-content-center align-items-center" style={{ minHeight: "60vh" }}>
+				<div className="text-center">
+					<div className="spinner-border text-warning mb-4" role="status" style={{ width: "4rem", height: "4rem" }}>
+						<span className="visually-hidden">Loading...</span>
+					</div>
+
+					<h3 className="section-title mt-3">
+						<i className="fas fa-jedi me-2"></i>
+						Loading contacts
+					</h3>
+
+					<p className="section-subtitle">
+						Did you know? Han Solo's ship, the Millennium Falcon, made the Kessel Run in less than 12 parsecs!
+					</p>
+				</div>
+			</div>
+		);
+	}
+
+	if (error) {
+		return (
+			<div className="d-flex justify-content-center align-items-center" style={{ minHeight: "60vh" }}>
+				<div className="text-center no-results">
+					<i className="fas fa-exclamation-triangle fa-3x mb-3"></i>
+
+					<h3>Something went wrong</h3>
+
+					<p>
+						We couldn’t retrieve your contacts from the galaxy.<br />
+						Error code: <strong>{error}</strong>
+					</p>
+				</div>
+			</div>
+		);
+	}
+
+
 
 	return (
 		<div className="container py-5">
@@ -59,7 +116,7 @@ export const ContactList = () => {
 				</button>
 			</div>
 
-			<ContactForm />
+			<ContactForm editValue={editValue} setEditValue={setEditValue} />
 
 			<ul className="list-group contact-list">
 				{filteredContacts.length > 0 ? (
@@ -81,6 +138,7 @@ export const ContactList = () => {
 								address={element.address}
 								phone={element.phone}
 								email={element.email}
+								setEditValue={setEditValue}
 							/>
 						</div>
 					))

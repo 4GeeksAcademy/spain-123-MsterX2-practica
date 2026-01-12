@@ -1,5 +1,3 @@
-// Import necessary components and functions from react-router-dom.
-
 import {
 	createBrowserRouter,
 	createRoutesFromElements,
@@ -7,30 +5,45 @@ import {
 } from "react-router-dom";
 import { Layout } from "./pages/Layout";
 import { Home } from "./pages/Home";
-import { ContactList } from "./pages/ContactList/ContactList.jsx";
-// import SingleContact from "./pages/ContactList/SingleContact.jsx";
 import { ContactListLayout } from "./pages/ContactList/ContactListLayout.jsx";
 import { People } from "./pages/People/People.jsx";
 import { Vehicles } from "./pages/Vehicles/Vehicles.jsx";
 import { Planets } from "./pages/Planets/Planets.jsx";
+import { Favorites } from "./pages/Favorites.jsx";
+import { DetailView } from "./pages/DetailView.jsx";
+import { Login } from "./pages/Login.jsx";
+import { ContactDetails } from "./pages/ContactList/ContactDetails.jsx";
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
-		// CreateRoutesFromElements function allows you to build route elements declaratively.
-		// Create your routes here, if you want to keep the Navbar and Footer in all views, add your new routes inside the containing Route.
-		// Root, on the contrary, create a sister Route, if you have doubts, try it!
-		// Note: keep in mind that errorElement will be the default page when you don't get a route, customize that page to make your project more attractive.
-		// Note: The child paths of the Layout element replace the Outlet component with the elements contained in the "element" attribute of these child paths.
-
-		// Root Route: All navigation will start from here.
 		<Route path="/" element={<Layout />} errorElement={<h1>Not found!</h1>}>
-
 			<Route path="/" element={<Home />} />
 			<Route path="/people" element={<People />} />
+			<Route path="/people/:people_id" element={<DetailView />} />
+
 			<Route path="/vehicles" element={<Vehicles />} />
+			<Route path="/vehicles/:vehicle_id" element={<DetailView />} />
+
 			<Route path="/planets" element={<Planets />} />
+			<Route path="/planets/:planet_id" element={<DetailView />} />
+
+			<Route path="/favorites" element={<Favorites />} />
+
 			<Route path="/contacts" element={<ContactListLayout />} />
-			{/* <Route path="/contactos/:id" element={<SingleContact />} />  Dynamic route for single items */}
+			<Route path="/contacts/details" element={<ContactDetails />} />
+
+			<Route path="/login" element={<Login />} />
 		</Route>
-	)
+	),
+	{
+		/* Activa estas flags para eliminar los avisos de la consola */
+		future: {
+			v7_startTransition: true,
+			v7_relativeSplatPath: true,
+			v7_fetcherPersist: true,
+			v7_normalizeFormMethod: true,
+			v7_partialHydration: true,
+			v7_skipActionErrorRevalidation: true,
+		},
+	}
 );

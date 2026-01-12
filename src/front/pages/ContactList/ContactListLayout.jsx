@@ -1,11 +1,14 @@
-import { ContactContextProvider } from "../../hooks/useContactsContex"
-import { ContactList } from "./ContactList"
+import { ContactAnimationContextProvider } from "../../hooks/useAnimationContext.jsx";
+import { StoreProvider } from "../../hooks/useContactsContex.jsx";
+import { ContactList } from "./ContactList";
 
 
 export const ContactListLayout = () => {
     return (
-        <ContactContextProvider>
-            <ContactList />
-        </ContactContextProvider>
+        <StoreProvider>
+            <ContactAnimationContextProvider>
+                <ContactList />
+            </ContactAnimationContextProvider>
+        </StoreProvider>
     )
 }

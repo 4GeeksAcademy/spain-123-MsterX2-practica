@@ -1,28 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { useCrudContext } from '../../hooks/useContactsContex.jsx';
+import { useAnimationContext } from '../../hooks/useAnimationContext.jsx';
+import { createContact, updateContact } from '../../action.js';
+import useGlobalReducer from '../../hooks/useContactsContex.jsx';
 
-export const ContactForm = () => {
-    const context = useCrudContext();
-
-    if (!context) {
-        throw new Error('ContactForm must be used within ContactContextProvider');
-    }
-
-    const {
-        editValue,
-        setEditValue,
-        contacts,
-        setContacts,
-        setAnimatingId,
-        setAnimationType
-    } = context;
-
+export const ContactForm = ({ editValue, setEditValue }) => {
+    const { setAnimatingId,
+        setAnimationType } = useAnimationContext()
     const [contactForm, setContactForm] = useState({
         name: '',
         phone: '',
         email: '',
         address: ''
     });
+    const { store, dispatch } = useGlobalReducer();
+    const user = "chanchitoFeliz"
+    const host = "https://playground.4geeks.com/contact";
+
+
+
 
     useEffect(() => {
         if (editValue && editValue.method === "PUT" && editValue.contact) {
@@ -32,14 +27,15 @@ export const ContactForm = () => {
                 email: editValue.contact.email,
                 address: editValue.contact.address
             });
-        } else {
-            setContactForm({
-                name: '',
-                phone: '',
-                email: '',
-                address: ''
-            });
+            return;
         }
+        setContactForm({
+            name: '',
+            phone: '',
+            email: '',
+            address: ''
+        });
+
     }, [editValue]);
 
     const handleInput = (e) => {
@@ -50,50 +46,38 @@ export const ContactForm = () => {
         });
     };
 
-    const handleSubmit = (e) => {
+
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (editValue?.method === "POST") {
-            const newContact = {
-                id: Math.max(...contacts.map(c => c.id), 0) + 1,
-                ...contactForm
-            };
-            setContacts([...contacts, newContact]);
-
-            setAnimatingId(newContact.id);
-            setAnimationType('add');
-
-            setTimeout(() => {
-                setAnimatingId(null);
-                setAnimationType(null);
-            }, 1000);
-
+            await createContact(dispatch, host, user, contactForm);
         } else if (editValue?.method === "PUT" && editValue.contact) {
-            setContacts(
-                contacts.map(contact =>
-                    contact.id === editValue.contact.id
-                        ? { ...contact, ...contactForm }
-                        : contact
-                )
+            await updateContact(
+                dispatch,
+                host,
+                user,
+                editValue.contact.id,
+                contactForm
             );
 
             setAnimatingId(editValue.contact.id);
-            setAnimationType('edit');
-
+            setAnimationType("edit");
             setTimeout(() => {
                 setAnimatingId(null);
                 setAnimationType(null);
             }, 1000);
         }
-
         setContactForm({
-            name: '',
-            phone: '',
-            email: '',
-            address: ''
+            name: "",
+            phone: "",
+            email: "",
+            address: "",
         });
         setEditValue(null);
     };
+
 
     const handleClose = () => {
         setEditValue(null);
@@ -126,9 +110,6 @@ export const ContactForm = () => {
                             </h1>
                             <button
                                 type="button"
-                                className="btn-close btn-close-white"
-                                data-bs-dismiss="modal"
-                                aria-label="Close"
                                 onClick={handleClose}
                             ></button>
                         </div>
