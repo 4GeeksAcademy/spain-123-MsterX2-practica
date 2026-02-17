@@ -1,5 +1,5 @@
 import { apiRequest } from "./apiRequest";
-
+const host = import.meta.env.VITE_BACKEND_URL
 
 const handleApi = async (dispatch, apiCall, startAction, successAction, errorFallback, transform) => {
     if (startAction) dispatch({ type: startAction });
@@ -69,6 +69,42 @@ export const deleteContact = (dispatch, host, user, id) => {
         null,
         "DELETE_CONTACT",
         "Error deleting contact",
-        () => id // payload será el id en DELETE
+        () => id
     );
+};
+
+export const login = async (dispatch, credentials) => {
+    const url = `${host}/api/login`
+    const user = {
+        email: credentials.email,
+        password: credentials.password
+    };
+    const response = await apiRequest(url, "POST", { body: user });
+    if (!response.ok) return false;
+    dispatch({
+        type: "LOGIN",
+        payload: { ...response.data.results }
+    });
+    return response.data
+};
+
+export const signup = (dispatch, formData) => {
+    const mockUser = {
+        id: Date.now(),
+        email: formData.email,
+        username: formData.email.split('@')[0],
+        isActive: formData.isActive || false
+    };
+
+    dispatch({
+        type: "SIGNUP",
+        payload: mockUser
+    });
+
+    return { ok: true, data: mockUser };
+};
+
+export const logout = (dispatch) => {
+    dispatch({ type: "LOGOUT" });
+    return { ok: true };
 };

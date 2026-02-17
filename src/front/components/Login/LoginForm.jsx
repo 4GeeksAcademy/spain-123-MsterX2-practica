@@ -1,16 +1,29 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import useGlobalReducer from '../../hooks/useGlobalReducer.jsx';
+import { login } from '../../action.js';
 
 export const LoginForm = ({ onForgotPassword }) => {
+    const { dispatch } = useGlobalReducer();
     const [emailAddress, setEmailAddress] = useState('');
     const [userPassword, setUserPassword] = useState('');
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+    const navigate = useNavigate()
 
-    const handleLoginSubmit = (event) => {
+    const handleLoginSubmit = async (event) => {
         event.preventDefault();
-        console.log({
-            email: emailAddress,
-            password: userPassword,
-        });
+        const dataToSend = { email: emailAddress, password: userPassword }
+        const result = await login(dispatch, dataToSend);
+        if (!result) {
+            resetLoginForm();
+            return
+        }
+        localStorage.setItem("access_token", result.access_token)
+        dispatch({
+            type: "HANDLE_TOKEN",
+            payload: result.access_token
+        })
+        navigate("/")
     };
 
     const resetLoginForm = () => {

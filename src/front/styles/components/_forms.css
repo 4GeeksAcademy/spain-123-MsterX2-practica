@@ -30,3 +30,85 @@
     font-size: 0.9rem;
     letter-spacing: 0.05em;
 }
+
+.star-wars-checkbox-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.star-wars-checkbox {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    width: 0;
+    height: 0;
+}
+
+.star-wars-checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    gap: 0.75rem;
+}
+
+.checkbox-box {
+    width: 22px;
+    height: 22px;
+    border: 2px solid rgba(0, 212, 255, 0.5);
+    border-radius: 4px;
+    background: rgba(0, 212, 255, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.checkbox-check {
+    color: var(--sw-yellow);
+    font-size: 12px;
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.2s ease;
+    text-shadow: 0 0 5px var(--sw-yellow);
+}
+
+.star-wars-checkbox:checked+.star-wars-checkbox-label .checkbox-box {
+    background: rgba(0, 212, 255, 0.15);
+    border-color: var(--sw-cyan);
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.4);
+}
+
+.star-wars-checkbox:checked+.star-wars-checkbox-label .checkbox-check {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.star-wars-checkbox:focus+.star-wars-checkbox-label .checkbox-box {
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+    border-color: var(--sw-cyan);
+}
+
+.star-wars-checkbox-label:hover .checkbox-box {
+    border-color: var(--sw-cyan);
+    box-shadow: 0 0 8px rgba(0, 212, 255, 0.3);
+}
+
+.checkbox-text {
+    color: var(--sw-cyan);
+    font-family: var(--font-orbitron);
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    text-shadow: 0 0 3px rgba(0, 212, 255, 0.3);
+    transition: color 0.3s ease;
+}
+
+.star-wars-checkbox:checked+.star-wars-checkbox-label .checkbox-text {
+    color: var(--sw-yellow);
+    text-shadow: 0 0 5px rgba(255, 232, 31, 0.5);
+}
+
+.star-wars-checkbox-label:hover .checkbox-text {
+    color: var(--sw-yellow);
+}

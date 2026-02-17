@@ -1,17 +1,21 @@
 import React, { useState } from 'react';
+import useGlobalReducer from '../../hooks/useGlobalReducer.jsx';
+import { signup } from '../../action.js';
 
 export const SignupForm = () => {
+  const { dispatch } = useGlobalReducer();
   const [emailAddress, setEmailAddress] = useState('');
   const [userPassword, setUserPassword] = useState('');
   const [confirmUserPassword, setConfirmUserPassword] = useState('');
   const [arePasswordsVisible, setArePasswordsVisible] = useState(false);
+  const [isActive, setIsActive] = useState(false);
 
   const handleSignupSubmit = (event) => {
     event.preventDefault();
-    console.log({
+    signup(dispatch, {
       email: emailAddress,
       password: userPassword,
-      confirmPassword: confirmUserPassword,
+      isActive: isActive
     });
   };
 
@@ -20,6 +24,7 @@ export const SignupForm = () => {
     setUserPassword('');
     setConfirmUserPassword('');
     setArePasswordsVisible(false);
+    setIsActive(false);
   };
 
   return (
@@ -50,6 +55,22 @@ export const SignupForm = () => {
         onChange={(event) => setConfirmUserPassword(event.target.value)}
         required
       />
+
+      <div className="star-wars-checkbox-wrapper mb-3">
+        <input
+          type="checkbox"
+          id="is-active"
+          className="star-wars-checkbox"
+          checked={isActive}
+          onChange={(event) => setIsActive(event.target.checked)}
+        />
+        <label htmlFor="is-active" className="star-wars-checkbox-label">
+          <span className="checkbox-box">
+            <i className="fas fa-check checkbox-check"></i>
+          </span>
+          <span className="checkbox-text">Active Account</span>
+        </label>
+      </div>
 
       <button
         type="button"

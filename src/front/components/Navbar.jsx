@@ -1,6 +1,7 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import React, { useContext } from 'react';
 import { searchContext } from "../pages/Layout";
+import useGlobalReducer from "../hooks/useGlobalReducer";
 
 export const Navbar = ({ activeSection, onSectionChange }) => {
 	const handleClick = (e, section) => {
@@ -8,6 +9,7 @@ export const Navbar = ({ activeSection, onSectionChange }) => {
 		onSectionChange(section);
 	};
 	const [searchTerm, setSearchTerm] = useContext(searchContext);
+	const { store } = useGlobalReducer()
 
 	return (
 		<nav className="navbar navbar-expand-lg navbar-dark star-wars-navbar sticky-top">
@@ -68,29 +70,32 @@ export const Navbar = ({ activeSection, onSectionChange }) => {
 								Planets
 							</NavLink>
 						</li>
+						{store.isAuthenticated ?
+							<>
+								<li className="nav-item">
+									<NavLink
+										to={"/favorites"}
+										className={`nav-link border-0 bg-transparent ${activeSection === 'favorites' ? 'active' : ''}`}
+										style={{ cursor: 'pointer' }}
+									>
+										<i className="fas fa-heart me-2"></i>
+										Favorites
+									</NavLink>
+								</li>
 
-						<li className="nav-item">
-							<NavLink
-								to={"/favorites"}
-								className={`nav-link border-0 bg-transparent ${activeSection === 'favorites' ? 'active' : ''}`}
-								style={{ cursor: 'pointer' }}
-							>
-								<i className="fas fa-heart me-2"></i>
-								Favorites
-							</NavLink>
-						</li>
-
-						<li className="nav-item">
-							<NavLink
-								to={"/contacts"}
-								className={`nav-link border-0 bg-transparent ${activeSection === 'contacts' ? 'active' : ''}`}
-								style={{ cursor: 'pointer' }}
-							>
-								<i className="fas fa-address-book me-2"></i>
-								Contact List
-							</NavLink>
-						</li>
-
+								<li className="nav-item">
+									<NavLink
+										to={"/contacts"}
+										className={`nav-link border-0 bg-transparent ${activeSection === 'contacts' ? 'active' : ''}`}
+										style={{ cursor: 'pointer' }}
+									>
+										<i className="fas fa-address-book me-2"></i>
+										Contact List
+									</NavLink>
+								</li>
+							</> :
+							null
+						}
 					</ul>
 
 					<div className="d-flex">
