@@ -13,6 +13,7 @@ import { Favorites } from "./pages/Favorites.jsx";
 import { DetailView } from "./pages/DetailView.jsx";
 import { Login } from "./pages/Login.jsx";
 import { ContactDetails } from "./pages/ContactList/ContactDetails.jsx";
+import { Dashboard } from "./pages/Dashboard.jsx";
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -33,6 +34,7 @@ export const router = createBrowserRouter(
 			<Route path="/contacts/details" element={<ContactDetails />} />
 
 			<Route path="/login" element={<Login />} />
+			<Route path="/dashboard" element={<Dashboard />} />
 		</Route>
 	),
 	{

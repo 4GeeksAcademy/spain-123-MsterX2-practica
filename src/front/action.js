@@ -108,3 +108,7 @@ export const logout = (dispatch) => {
     dispatch({ type: "LOGOUT" });
     return { ok: true };
 };
+
+export const protect = async () => {
+    console.log("funcion protect")
+}

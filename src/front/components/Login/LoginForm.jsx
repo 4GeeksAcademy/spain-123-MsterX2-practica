@@ -23,7 +23,7 @@ export const LoginForm = ({ onForgotPassword }) => {
             type: "HANDLE_TOKEN",
             payload: result.access_token
         })
-        navigate("/")
+        navigate("/dashboard")
     };
 
     const resetLoginForm = () => {

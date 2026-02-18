@@ -112,3 +112,71 @@
         font-size: 0.85rem;
     }
 }
+
+/* Estilos para el dropdown "More" del navbar responsive */
+.star-wars-navbar .dropdown-menu {
+    background: var(--gradient-dark);
+    border: 1px solid var(--sw-cyan);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-navbar), 0 0 30px rgba(0, 212, 255, 0.3);
+    margin-top: 0.5rem;
+    min-width: 180px;
+    padding: 0.5rem;
+}
+
+.star-wars-navbar .dropdown-menu.show {
+    display: block;
+}
+
+.star-wars-navbar .dropdown-item {
+    color: var(--sw-cyan) !important;
+    font-family: var(--font-orbitron);
+    font-size: 0.9rem;
+    padding: 0.6rem 1rem;
+    border-radius: var(--border-radius-sm);
+    transition: var(--transition-default);
+    display: flex;
+    align-items: center;
+}
+
+.star-wars-navbar .dropdown-item:hover {
+    background: rgba(0, 212, 255, 0.15);
+    color: var(--sw-yellow) !important;
+    transform: translateX(4px);
+}
+
+.star-wars-navbar .dropdown-item.active {
+    background: linear-gradient(135deg, rgba(255, 232, 31, 0.2), rgba(0, 212, 255, 0.2));
+    color: var(--sw-yellow) !important;
+    border: 1px solid var(--sw-yellow);
+}
+
+.star-wars-navbar .dropdown-toggle {
+    color: var(--sw-cyan) !important;
+    font-family: var(--font-orbitron);
+    margin: 0 0.5rem;
+    padding: 0.5rem 1rem !important;
+    border-radius: var(--border-radius-sm);
+    transition: var(--transition-default);
+    background: transparent;
+    border: none;
+    display: flex;
+    align-items: center;
+}
+
+.star-wars-navbar .dropdown-toggle:hover {
+    background: rgba(0, 212, 255, 0.1);
+    color: var(--sw-yellow) !important;
+}
+
+.star-wars-navbar .dropdown-toggle.active {
+    background: linear-gradient(135deg, rgba(255, 232, 31, 0.2), rgba(0, 212, 255, 0.2));
+    color: var(--sw-yellow) !important;
+    border: 1px solid var(--sw-yellow);
+}
+
+.star-wars-navbar .dropdown-toggle::after {
+    margin-left: 0.5rem;
+    vertical-align: middle;
+    border-top-color: currentColor;
+}
