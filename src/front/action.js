@@ -110,5 +110,19 @@ export const logout = (dispatch) => {
 };
 
 export const protect = async () => {
-    console.log("funcion protect")
-}
+    console.log("funcion protect");
+    const options = {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`
+        }
+    };
+    console.log(options);
+    const response = await apiRequest(`${host}/api/protected`, "GET", options);
+    if (!response.ok) {
+        console.log("Error", response.status, response.statusText);
+        return false;
+    };
+    const data = response.data;
+    console.log(data)
+    return data
+};

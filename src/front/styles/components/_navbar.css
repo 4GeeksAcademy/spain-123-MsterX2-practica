@@ -180,3 +180,140 @@
     vertical-align: middle;
     border-top-color: currentColor;
 }
+
+/* NUEVO LAYOUT: Reemplaza navbar-collapse de Bootstrap */
+.navbar-content {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1rem;
+    align-items: center;
+    flex: 1;
+}
+
+/* Contenedor de links de navegación */
+.navbar-links {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 0.5rem;
+    overflow: visible;
+}
+
+/* Items individuales */
+.navbar-link-item {
+    flex-shrink: 0;
+}
+
+/* Sección de auth (search + buttons) */
+.navbar-auth-section {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-shrink: 0;
+}
+
+/* Links de navegación */
+.navbar-link {
+    display: flex;
+    align-items: center;
+    color: var(--sw-cyan);
+    font-family: var(--font-orbitron);
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius-sm);
+    text-decoration: none;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: var(--transition-default);
+}
+
+.navbar-link:hover {
+    background: rgba(0, 212, 255, 0.1);
+    color: var(--sw-yellow);
+    transform: translateY(-2px);
+}
+
+.navbar-link.active {
+    background: linear-gradient(135deg, rgba(255, 232, 31, 0.2), rgba(0, 212, 255, 0.2));
+    color: var(--sw-yellow);
+    border: 1px solid var(--sw-yellow);
+    box-shadow: 0 0 20px rgba(255, 232, 31, 0.4);
+}
+
+/* Dropdown header para "My Account" dentro de More */
+.dropdown-header {
+    display: block;
+    padding: 0.5rem 1rem;
+    margin-bottom: 0;
+    font-size: 0.875rem;
+    color: var(--sw-cyan);
+    white-space: nowrap;
+    font-family: var(--font-orbitron);
+    border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+    margin-bottom: 0.25rem;
+}
+
+/* Responsive: en móvil volver a comportamiento de columna */
+@media (max-width: 991px) {
+    .navbar-content {
+        display: none;
+        /* Oculto por defecto, se muestra con clase 'show' */
+        grid-template-columns: 1fr;
+        width: 100%;
+        padding-top: 1rem;
+    }
+
+    .navbar-content.show {
+        display: grid;
+    }
+
+    .navbar-links {
+        flex-direction: column;
+        overflow-x: visible;
+    }
+
+    .navbar-link-item {
+        width: 100%;
+    }
+
+    .navbar-auth-section {
+        flex-direction: column;
+        width: 100%;
+        gap: 0.5rem;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(0, 212, 255, 0.2);
+    }
+
+    .navbar-auth-section .search-container {
+        width: 100%;
+    }
+
+    .navbar-auth-section .star-wars-search {
+        width: 100%;
+    }
+
+    .navbar-auth-section .auth-buttons-container {
+        width: 100%;
+        justify-content: flex-end;
+    }
+}
+
+/* En desktop: ajustar tamaño del search según espacio */
+@media (max-width: 1100px) {
+    .star-wars-search {
+        min-width: 120px;
+        width: 120px;
+    }
+}
+
+@media (max-width: 1200px) {
+    .star-wars-search {
+        min-width: 150px;
+        width: 150px;
+    }
+}

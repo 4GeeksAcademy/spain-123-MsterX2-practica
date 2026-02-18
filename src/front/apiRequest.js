@@ -17,13 +17,15 @@
 
 
 export const apiRequest = async (uri, metodo,
-	{ body = null, notFoundText = null } = {}) => {
+	{ body = null, notFoundText = null, headers = {} } = {}) => {
 	const options = {
 		method: metodo,
 		headers: {
-			"Content-Type": "application/json"
+			"Content-Type": "application/json",
+			...headers
 		}
 	};
+
 
 	if (body != null) {
 		options.body = JSON.stringify(body)

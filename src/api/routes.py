@@ -34,12 +34,14 @@ def login():
 @api.route("/protected", methods=["GET"])
 @jwt_required()
 def protected():
-    # Access the identity of the current user with get_jwt_identity
+    response_body = {}
     current_user = get_jwt_identity()
     additional_claims = get_jwt()
     print(current_user, flush=True)
     print(additional_claims, flush=True)
-    return jsonify(logged_in_as=current_user), 200
+    response_body["message"] = "Autorizado para ver esta información"
+    response_body["results"] = current_user
+    return response_body, 200
 
 
 

@@ -1,8 +1,13 @@
 import React from "react";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
+import { protect } from "../action.js";
 
 export const Dashboard = () => {
     const { store } = useGlobalReducer();
+
+    const handle_whoiam = () => {
+        protect()
+    }
 
     return (
         <div className="container py-5">
@@ -25,8 +30,8 @@ export const Dashboard = () => {
                                     Desde aquí podrás gestionar tu experiencia en la base de datos de Star Wars,
                                     acceder a tus favoritos, administrar tus contactos y explorar el universo.
                                 </p>
+                                <span className="btn star-wars-button" onClick={handle_whoiam}>Who I Am</span>
                             </div>
-
                             <div className="mt-5 pt-4 border-top" style={{ borderColor: 'rgba(0, 212, 255, 0.3)' }}>
                                 <div className="text-center">
                                     <p className="mb-0" style={{ color: 'var(--sw-yellow)', fontFamily: 'var(--font-orbitron)', fontSize: '0.9rem' }}>

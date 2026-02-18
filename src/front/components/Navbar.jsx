@@ -8,7 +8,13 @@ export const Navbar = ({ activeSection, onSectionChange }) => {
 	const [searchTerm, setSearchTerm] = useContext(searchContext);
 	const { store, dispatch } = useGlobalReducer();
 	const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false);
+	const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false);
+	const [visibleItems, setVisibleItems] = useState([]);
+	const [hiddenItems, setHiddenItems] = useState([]);
 	const accountDropdownRef = useRef(null);
+	const moreDropdownRef = useRef(null);
+	const navLinksRef = useRef(null);
+	const moreButtonRef = useRef(null);
 
 	const handleLogout = () => {
 		localStorage.removeItem("access_token");
@@ -24,24 +30,6 @@ export const Navbar = ({ activeSection, onSectionChange }) => {
 		}
 	};
 
-	// Cerrar dropdown al hacer click fuera
-	useEffect(() => {
-		const handleClickOutside = (event) => {
-			if (accountDropdownRef.current && !accountDropdownRef.current.contains(event.target)) {
-				setIsAccountDropdownOpen(false);
-			}
-		};
-
-		document.addEventListener('mousedown', handleClickOutside);
-		return () => document.removeEventListener('mousedown', handleClickOutside);
-	}, []);
-
-	// Cerrar dropdown al cambiar de ruta
-	useEffect(() => {
-		setIsAccountDropdownOpen(false);
-	}, [activeSection]);
-
-	// Items de navegación
 	const publicNavItems = [
 		{ to: "/people", icon: "fa-users", label: "People", section: "people" },
 		{ to: "/vehicles", icon: "fa-rocket", label: "Vehicles", section: "vehicles" },
@@ -54,8 +42,126 @@ export const Navbar = ({ activeSection, onSectionChange }) => {
 		{ to: "/dashboard", icon: "fa-tachometer-alt", label: "Dashboard", section: "dashboard" },
 	];
 
-	// Verificar si algún item de account está activo
+	const allNavItems = [
+		...publicNavItems,
+		...(store.isAuthenticated ? [{
+			type: 'dropdown',
+			label: 'My Account',
+			icon: 'fa-user-circle',
+			section: 'account',
+			items: accountNavItems
+		}] : [])
+	];
+
 	const isAccountActive = accountNavItems.some(item => activeSection === item.section);
+
+	useEffect(() => {
+		const calculateVisibleItems = () => {
+			if (window.innerWidth < 992) {
+				setVisibleItems(allNavItems);
+				setHiddenItems([]);
+				return;
+			}
+
+			const navContainer = navLinksRef.current;
+			const moreButton = moreButtonRef.current;
+			if (!navContainer) return;
+
+			const containerWidth = navContainer.offsetWidth;
+			const reservedWidth = 300;
+			const availableWidth = containerWidth - reservedWidth;
+			const moreButtonWidth = moreButton ? moreButton.offsetWidth : 100;
+
+			let currentWidth = 0;
+			const visible = [];
+			const hidden = [];
+			const itemWidth = 100;
+
+			for (let i = 0; i < allNavItems.length; i++) {
+				const itemWidthWithGap = itemWidth + 8;
+				const neededWidth = i < allNavItems.length - 1
+					? itemWidthWithGap
+					: itemWidth;
+
+				if (currentWidth + neededWidth + moreButtonWidth <= availableWidth || i === 0) {
+					visible.push(allNavItems[i]);
+					currentWidth += neededWidth;
+				} else {
+					hidden.push(allNavItems[i]);
+				}
+			}
+
+			setVisibleItems(visible);
+			setHiddenItems(hidden);
+		};
+
+		calculateVisibleItems();
+		window.addEventListener('resize', calculateVisibleItems);
+		return () => window.removeEventListener('resize', calculateVisibleItems);
+	}, [allNavItems.length, store.isAuthenticated]);
+
+	useEffect(() => {
+		const handleClickOutside = (event) => {
+			if (accountDropdownRef.current && !accountDropdownRef.current.contains(event.target)) {
+				setIsAccountDropdownOpen(false);
+			}
+			if (moreDropdownRef.current && !moreDropdownRef.current.contains(event.target)) {
+				setIsMoreDropdownOpen(false);
+			}
+		};
+
+		document.addEventListener('mousedown', handleClickOutside);
+		return () => document.removeEventListener('mousedown', handleClickOutside);
+	}, []);
+
+	useEffect(() => {
+		setIsAccountDropdownOpen(false);
+		setIsMoreDropdownOpen(false);
+	}, [activeSection]);
+
+	const renderNavItem = (item, isInMoreDropdown = false) => {
+		if (item.type === 'dropdown') {
+			return (
+				<li className={`navbar-link-item dropdown ${isInMoreDropdown ? 'more-dropdown-item' : ''}`} ref={isInMoreDropdown ? null : accountDropdownRef}>
+					<button
+						className={`navbar-link dropdown-toggle ${isAccountActive ? 'active' : ''}`}
+						onClick={() => isInMoreDropdown ? null : setIsAccountDropdownOpen(!isAccountDropdownOpen)}
+						aria-expanded={isAccountDropdownOpen}
+					>
+						<i className={`fas ${item.icon} me-2`}></i>
+						{item.label}
+					</button>
+					<ul className={`dropdown-menu star-wars-dropdown ${isAccountDropdownOpen && !isInMoreDropdown ? 'show' : ''}`}>
+						{item.items.map((subItem) => (
+							<li key={subItem.section}>
+								<NavLink
+									to={subItem.to}
+									className={`dropdown-item ${activeSection === subItem.section ? 'active' : ''}`}
+									onClick={(e) => handleClick(e, subItem.section)}
+								>
+									<i className={`fas ${subItem.icon} me-2`}></i>
+									{subItem.label}
+								</NavLink>
+							</li>
+						))}
+					</ul>
+				</li>
+			);
+		}
+
+		return (
+			<li className={`navbar-link-item ${isInMoreDropdown ? 'more-dropdown-item' : ''}`} key={item.section}>
+				<NavLink
+					to={item.to}
+					className={`navbar-link ${activeSection === item.section ? 'active' : ''}`}
+					onClick={() => isInMoreDropdown && setIsMoreDropdownOpen(false)}
+				>
+					<i className={`fas ${item.icon} me-2`}></i>
+					{item.label}
+				</NavLink>
+			</li>
+		);
+	};
 
 	return (
 		<nav className="navbar navbar-expand-lg navbar-dark star-wars-navbar sticky-top">
@@ -81,46 +187,55 @@ export const Navbar = ({ activeSection, onSectionChange }) => {
 					<span className="navbar-toggler-icon"></span>
 				</button>
 
-				<div className="collapse navbar-collapse" id="navbarNav">
-					<ul className="navbar-nav me-auto">
-						{/* Items públicos - siempre visibles */}
-						{publicNavItems.map((item) => (
-							<li className="nav-item" key={item.section}>
-								<NavLink
-									to={item.to}
-									className={`nav-link border-0 bg-transparent ${activeSection === item.section ? 'active' : ''}`}
-									style={{ cursor: 'pointer' }}
-								>
-									<i className={`fas ${item.icon} me-2`}></i>
-									{item.label}
-								</NavLink>
-							</li>
-						))}
+				<div className="navbar-content" id="navbarNav">
+					<ul className="navbar-links" ref={navLinksRef}>
+						{visibleItems.map(item => renderNavItem(item))}
 
-						{/* Dropdown "My Account" para usuarios autenticados */}
-						{store.isAuthenticated && (
-							<li className="nav-item dropdown" ref={accountDropdownRef}>
+						{hiddenItems.length > 0 && (
+							<li className="navbar-link-item dropdown" ref={moreDropdownRef}>
 								<button
-									className={`nav-link dropdown-toggle border-0 bg-transparent ${isAccountActive ? 'active' : ''}`}
-									onClick={() => setIsAccountDropdownOpen(!isAccountDropdownOpen)}
-									aria-expanded={isAccountDropdownOpen}
-									style={{ cursor: 'pointer' }}
+									ref={moreButtonRef}
+									className="navbar-link dropdown-toggle"
+									onClick={() => setIsMoreDropdownOpen(!isMoreDropdownOpen)}
+									aria-expanded={isMoreDropdownOpen}
 								>
-									<i className="fas fa-user-circle me-2"></i>
-									My Account
+									<i className="fas fa-ellipsis-h me-2"></i>
+									More
 								</button>
-								<ul className={`dropdown-menu star-wars-dropdown ${isAccountDropdownOpen ? 'show' : ''}`}>
-									{accountNavItems.map((item) => (
-										<li key={item.section}>
-											<NavLink
-												to={item.to}
-												className={`dropdown-item ${activeSection === item.section ? 'active' : ''}`}
-												style={{ cursor: 'pointer' }}
-												onClick={(e) => handleClick(e, item.section)}
-											>
-												<i className={`fas ${item.icon} me-2`}></i>
-												{item.label}
-											</NavLink>
+								<ul className={`dropdown-menu star-wars-dropdown ${isMoreDropdownOpen ? 'show' : ''}`}>
+									{hiddenItems.map(item => (
+										<li key={item.section || item.label}>
+											{item.type === 'dropdown' ? (
+												<>
+													<span className="dropdown-header">
+														<i className={`fas ${item.icon} me-2`}></i>
+														{item.label}
+													</span>
+													{item.items.map(subItem => (
+														<NavLink
+															key={subItem.section}
+															to={subItem.to}
+															className={`dropdown-item ${activeSection === subItem.section ? 'active' : ''}`}
+															onClick={(e) => {
+																handleClick(e, subItem.section);
+																setIsMoreDropdownOpen(false);
+															}}
+														>
+															<i className={`fas ${subItem.icon} me-2`}></i>
+															{subItem.label}
+														</NavLink>
+													))}
+												</>
+											) : (
+												<NavLink
+													to={item.to}
+													className={`dropdown-item ${activeSection === item.section ? 'active' : ''}`}
+													onClick={() => setIsMoreDropdownOpen(false)}
+												>
+													<i className={`fas ${item.icon} me-2`}></i>
+													{item.label}
+												</NavLink>
+											)}
 										</li>
 									))}
 								</ul>
@@ -128,7 +243,7 @@ export const Navbar = ({ activeSection, onSectionChange }) => {
 						)}
 					</ul>
 
-					<div className="d-flex align-items-center gap-2">
+					<div className="navbar-auth-section">
 						<div className="search-container">
 							<i className="fas fa-search search-icon"></i>
 							<input
@@ -141,7 +256,7 @@ export const Navbar = ({ activeSection, onSectionChange }) => {
 						</div>
 
 						{store.isAuthenticated ? (
-							<div className="auth-buttons-container d-flex align-items-center gap-2">
+							<div className="auth-buttons-container">
 								<span className="navbar-user-name d-none d-md-inline">
 									<i className="fas fa-jedi me-1"></i>
 									{store.user?.first_name || store.user?.email || 'User'}
@@ -156,7 +271,7 @@ export const Navbar = ({ activeSection, onSectionChange }) => {
 								</button>
 							</div>
 						) : (
-							<div className="auth-buttons-container d-flex align-items-center gap-2">
+							<div className="auth-buttons-container">
 								<Link
 									to="/login"
 									className="btn star-wars-button-secondary navbar-auth-btn"
